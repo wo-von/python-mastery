@@ -2,28 +2,24 @@
 ROOT_PATH = "../../"
 
 DATA_PATH = ROOT_PATH + "Data/"
-
-DATA_SOURCE = "portfolio.dat"
-BAD_DATA_SOURCE = "portfolio3.dat"
+DEFAULT_DATA = "portfolio1.dat"
 
 
-def totalCost(data_path):
+def portfolio_cost(data_path):
+    data_path = DATA_PATH + data_path
     total_cost = 0
     with open(data_path) as f:
         for line in f:
+            linelst = line.split()
             try:
-                shares = int(line.split()[1])
+                shares = int(linelst[1])
+                cost = float(linelst[2])
+                total_cost += shares * cost
             except ValueError as e:
                 print(f"Couldn't parse {line}Reason: {e}")
                 continue
-            try:
-                cost = float(line.split()[2])
-            except ValueError as e:
-                print(f"Couldn't parse {line}Reason: {e}")
-                continue
-            total_cost += shares * cost
     return total_cost
 
 
-print(totalCost(DATA_PATH + DATA_SOURCE))
-print(totalCost(DATA_PATH + BAD_DATA_SOURCE))
+if __name__ == "__main__":
+    print(portfolio_cost(DEFAULT_DATA))
