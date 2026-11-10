@@ -3,20 +3,17 @@ ROOT_PATH = "../../"
 
 DATA_PATH = ROOT_PATH + "Data/"
 
-DATA_SOURCE = "portfolio.csv"
+DATA_SOURCE = "portfolio.dat"
 
-with open(DATA_PATH + DATA_SOURCE) as f:
-    data = f.read()
 
-datalst = data.split("\n")[:-1]
+def totalCost(data_path):
+    total_cost = 0
+    with open(data_path) as f:
+        for line in f:
+            shares = int(line.split()[1])
+            cost = float(line.split()[2])
+            total_cost += shares * cost
+    return total_cost
 
-header = datalst[0]
 
-cost = 0
-
-for l in range(len(datalst)):
-    if l == 0:
-        continue
-    cost += int(datalst[l].split(",")[1]) * float(datalst[l].split(",")[2])
-
-print(cost)
+print(totalCost(DATA_PATH + DATA_SOURCE))
