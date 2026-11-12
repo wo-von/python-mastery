@@ -38,10 +38,10 @@ def read_rides_as_class_with_slots(filename):
     records = []
     with open(filename) as f:
         rows = csv.reader(f)
-        headings = next(f)
+        headings = next(rows)
         for row in rows:
-            row = Row(row[0], row[1], row[2], int(row[3]))
-            records.append(row)
+            record = Row(row[0], row[1], row[2], int(row[3]))
+            records.append(record)
     return records
 
 
@@ -80,8 +80,21 @@ def read_rides_as_named_tuple(filename):
 
 
 if __name__ == "__main__":
+    import sys
     import tracemalloc
 
+    readers = {
+        "tuple": read_rides_as_named_tuple,
+        "dict": read_rides_as_dicts,
+        "namedtuple": read_rides_as_named_tuple,
+        "slots": read_rides_as_class_with_slots,
+    }
+    if len(sys.argv) != 2 or sys.argv[1] not in readers:
+        raise SystemExit(f"Usage: {sys.argv[0]} {{{"|".join(readers)}}}")
+
     tracemalloc.start()
-    rows = read_rides_as_tuples("../../Data/ctabus.csv")
-    print("Memory usage: current %d, peak %d" % tracemalloc.get_traced_memory())
+    rows = readers[sys.argv[1]]("../../Data/ctabus.csv")
+    current, peak = tracemalloc.get_traced_memory()
+    print(
+        f"{sys.argv[1]:>10}: current {current:,}  peak {peak:,}  per row {current / len(rows):.1f}"
+    )
